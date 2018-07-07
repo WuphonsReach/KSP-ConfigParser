@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\src\parse\parse.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+      <EmbeddedResource Include="TestFiles\*.cfg" />
+  </ItemGroup> 
+
 </Project>
