@@ -1,13 +1,19 @@
 using System;
 using System.IO;
 using System.Reflection;
+using parse.Models;
+using parse.Tests.TestFileTests;
 using Xunit;
 
 namespace parse.Tests
 {
+    ///<summary>Helper methods and tests to validate that the xUnit test environment
+    ///is as we expect it to be.</summary>
     public class ParserTests
     {
         protected const string TestFileDirectory = "TestFiles";
+
+        protected Parser Sut = new Parser();
 
         protected Assembly GetAssembly()
         {
@@ -22,30 +28,59 @@ namespace parse.Tests
             return resource;
         }
 
-        protected void AssertCanReadEmbeddedResource(string fileName)
+        protected Stream GetManifestResourceStream(string fileName)
         {
             var assembly = GetAssembly();
             var resource = GetResourceName(assembly, fileName);
-            using (Stream stream = assembly.GetManifestResourceStream(resource))
+            return assembly.GetManifestResourceStream(resource);
+        }
+
+        protected void AssertCanReadEmbeddedResource(string fileName)
+        {
+            using (Stream stream = GetManifestResourceStream(fileName))
             using (StreamReader reader = new StreamReader(stream))
             {
                 var line = reader.ReadLine();
                 Assert.True(
                     line != null,
-                    $"Could not read anything from embedded resource '{resource}'."
+                    $"Could not read anything from embedded resource '{fileName}'."
                     );
             }
         }
 
-        public class MMCacheSimpleExampleTests : ParserTests
+        protected void AssertFileNameIsInMetaData(ConfigFile configFile, string expectedFileName)
         {
-            private const string _fileName = "MMCacheSimpleExample.cfg";
+            Assert.True(configFile.FilePath.IndexOf(expectedFileName) >= 0,
+                $"Did not find '{expectedFileName}' in '{configFile.FilePath}'."
+                );
+        }
 
-            [Fact]
-            public void CanReadTestFile()
+        protected ConfigFile GetParsedConfigFile(string fileName)
+        {
+            var assembly = GetAssembly();
+            var resource = GetResourceName(assembly, fileName);
+            using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
-                AssertCanReadEmbeddedResource(_fileName);
+                var result = Sut.ParseConfigFile(fileName, stream);
+                return result;
             }
+        }
+
+        [Theory]
+        [InlineData(TestFileNames.MMCacheSimpleExample)]
+        [InlineData(TestFileNames.SimplePart)]
+        public void CanReadTestFile(string fileName)
+        {
+            AssertCanReadEmbeddedResource(fileName);
+        }
+
+        [Theory]
+        [InlineData(TestFileNames.MMCacheSimpleExample)]
+        [InlineData(TestFileNames.SimplePart)]
+        public void FileNameIsInMetaData(string fileName)
+        {
+            var result = GetParsedConfigFile(fileName);
+            AssertFileNameIsInMetaData(result, fileName);
         }
     }
 }
