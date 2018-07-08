@@ -7,6 +7,7 @@ namespace parse.Models
         public NodeType Type { get; set; }
         public string TypeIdentifier { get; set; }
         public ICollection<ConfigNode> Nodes { get; set; } = new List<ConfigNode>();
-        public ICollection<Attribute> Attributes { get; set; }
+        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public IList<InputLine> InputLines { get; set;} = new List<InputLine>();
     }
 }
