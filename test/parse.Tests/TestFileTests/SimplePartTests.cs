@@ -17,7 +17,7 @@ namespace parse.Tests.TestFileTests
         [Fact]
         public void First_top_level_node_should_be_part()
         {
-            var result = _configFile.Nodes.First();
+            var result = _configFile.RootNode.Nodes.First();
             Assert.Equal(NodeType.Part, result.Type);
         }
     }

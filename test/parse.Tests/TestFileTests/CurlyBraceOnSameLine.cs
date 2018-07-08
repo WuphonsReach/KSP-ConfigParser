@@ -17,14 +17,14 @@ namespace parse.Tests.TestFileTests
         [Fact]
         public void First_top_level_node_must_be_part()
         {
-            var firstNode = _configFile.Nodes.First();
+            var firstNode = _configFile.RootNode.Nodes.First();
             Assert.Equal(NodeType.Part, firstNode.Type);
         }
 
         [Fact]
         public void Part_node_has_resource_node()
         {
-            var firstNode = _configFile.Nodes.First();
+            var firstNode = _configFile.RootNode.Nodes.First();
             var resourceNode = firstNode.Nodes.First(x => x.Type == NodeType.Resource);
             Assert.NotNull(resourceNode);
         }
@@ -32,7 +32,7 @@ namespace parse.Tests.TestFileTests
         [Fact]
         public void Part_node_has_module_node()
         {
-            var firstNode = _configFile.Nodes.First();
+            var firstNode = _configFile.RootNode.Nodes.First();
             var resourceNode = firstNode.Nodes.First(x => x.Type == NodeType.Module);
             Assert.NotNull(resourceNode);
         }

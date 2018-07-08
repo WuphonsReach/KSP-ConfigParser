@@ -17,14 +17,14 @@ namespace parse
                 FilePath = filePath,
             };
 
-            result.Nodes = ParseInputLinesIntoNodes(fileLines);
+            result.RootNode = ParseInputLinesIntoNodes(fileLines);
 
             return result;
         }
 
-        private ICollection<ConfigNode> ParseInputLinesIntoNodes(IList<InputLine> fileLines)
+        private ConfigNode ParseInputLinesIntoNodes(IList<InputLine> fileLines)
         {
-            var results = new List<ConfigNode>();
+            var results = new ConfigNode();
             if (fileLines == null) return results;
 
             IdentifyBlocks(fileLines);

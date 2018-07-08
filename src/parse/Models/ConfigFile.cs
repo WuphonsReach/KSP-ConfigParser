@@ -5,6 +5,6 @@ namespace parse.Models
     public class ConfigFile
     {
         public string FilePath { get; set; }
-        public ICollection<ConfigNode> Nodes { get;set; } = new List<ConfigNode>();
+        public ConfigNode RootNode { get; set; }
     }
 }
