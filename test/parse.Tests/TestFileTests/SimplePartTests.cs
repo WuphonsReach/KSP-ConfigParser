@@ -1,4 +1,5 @@
 using System.Linq;
+using parse.Extensions;
 using parse.Models;
 using Xunit;
 
@@ -50,6 +51,40 @@ namespace parse.Tests.TestFileTests
             var node = firstNode.Nodes.First(x => x.Type == NodeType.Model);
             var attribute = node.AttributeDefinitions.First(x => x.Name == name);
             Assert.Equal(value, attribute.Value);
+        }
+
+        [Fact]
+        public void Is_this_a_data_transmitter()
+        {
+            var firstNode = _configFile.RootNode.Nodes.First();
+            var isDataTransmitter = firstNode.Nodes
+                .Any(
+                    x => x.AttributeDefinitions
+                        .Any(ad => 
+                            ad.Name == "name" 
+                            && ad.Value == "ModuleDataTransmitter"
+                            )
+                    );
+            Assert.True(isDataTransmitter);
+        }
+
+        [Fact]
+        public void Get_all_the_modules()
+        {
+            var nodes = _configFile.RootNode.Descendants().ToList();
+            Assert.Equal(5, nodes.Count);
+            var moduleNodes = nodes.Where(x => x.Type == NodeType.Module);
+            Assert.Equal(2, moduleNodes.Count());
+        }
+
+        [Fact]
+        public void Does_model_belong_to_a_part()
+        {
+            var nodes = _configFile.RootNode.Descendants().ToList();
+            Assert.Equal(5, nodes.Count);
+            var modelNode = nodes.First(x => x.Type == NodeType.Model);
+            var parentNode = modelNode.Parent;
+            Assert.Equal(NodeType.Part, parentNode.Type);
         }
 
     }
