@@ -19,7 +19,7 @@ namespace parse.Tests.Extensions
         [InlineData("=//", "", "", "")]
         [InlineData("x=3//C", "x", "3", "C")]
         [InlineData("PART {", "PART {", null, null)]
-        [InlineData("PART { v = 2 // test", "PART { v", " 2 ", " test")]
+        [InlineData("PART { v = 2 // test", "PART { v ", " 2 ", " test")]
         [InlineData("y=4 //C=DV", "y", "4 ", "C=DV")]
         [InlineData("PART { // Y=4", "PART { ", null, " Y=4")]
         public void ParseLine_works_correctly(string input, string expectedData, string expectedValue, string expectedComment)
