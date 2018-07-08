@@ -28,10 +28,8 @@ namespace parse
                         if (!string.IsNullOrWhiteSpace(line.Data))
                         {
                             // We have an interesting line with data
-                            var candidateData = line.Data.Trim();
-                            // open/close curly braces should be their own element
-                            // so if we find such a situation, we need to break the
-                            // line apart
+                            var candidates = line.SplitLineOnBraces();
+                            lines.AddRange(candidates);
                         }
                     }
                 }
