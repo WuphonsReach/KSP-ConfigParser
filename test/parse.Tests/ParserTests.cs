@@ -67,6 +67,7 @@ namespace parse.Tests
         }
 
         [Theory]
+        [InlineData(TestFileNames.CurlyBraceOnSameLine)]
         [InlineData(TestFileNames.MMCacheSimpleExample)]
         [InlineData(TestFileNames.SimplePart)]
         public void CanReadTestFile(string fileName)
@@ -75,12 +76,23 @@ namespace parse.Tests
         }
 
         [Theory]
+        [InlineData(TestFileNames.CurlyBraceOnSameLine)]
         [InlineData(TestFileNames.MMCacheSimpleExample)]
         [InlineData(TestFileNames.SimplePart)]
         public void FileNameIsInMetaData(string fileName)
         {
             var result = GetParsedConfigFile(fileName);
             AssertFileNameIsInMetaData(result, fileName);
+        }
+
+        [Theory]
+        [InlineData(TestFileNames.CurlyBraceOnSameLine)]
+        [InlineData(TestFileNames.MMCacheSimpleExample)]
+        [InlineData(TestFileNames.SimplePart)]
+        public void FileCanBeParsed(string fileName)
+        {
+            var result = GetParsedConfigFile(fileName);
+            Assert.NotNull(result);
         }
     }
 }
