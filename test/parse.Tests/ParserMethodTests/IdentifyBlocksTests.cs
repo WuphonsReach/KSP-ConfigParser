@@ -8,6 +8,10 @@ namespace parse.Tests.ParserMethodTests
 {
     public class IdentifyBlocksTests
     {
+        // These tests assume that the collection has been broken down into
+        // individual tokens.  So curly braces are always in their own
+        // token/line element.
+
         private Parser _sut = new Parser();
 
         private void AssertCorrectBlockId(int expected, IList<InputLine> inputs, int lineNumber)
