@@ -16,11 +16,11 @@ namespace parse.Extensions
             var commentStartIndex = line.IndexOf(commentMarker);
             if (commentStartIndex >= 0)
             {
-                result.Comment = line.Substring(commentStartIndex + commentMarker.Length);
+                result.Comment = line.Substring(commentStartIndex + commentMarker.Length).Trim();
                 line = line.Substring(0, commentStartIndex);
             }
 
-            result.Data = line;
+            result.Data = line.Trim();
 
             return result;
         }
