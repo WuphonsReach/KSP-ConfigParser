@@ -13,23 +13,22 @@ namespace parse.Extensions
             var result = new InputLine();
             if (line == null) return result;
 
-            var assignmentStartIndex = line.IndexOf(assignmentMarker);
-            result.Data = (assignmentStartIndex == -1)
-                ? line
-                : line.Substring(0, assignmentStartIndex)
-                ;
-
-            line = line.Substring(result.Data.Length);
-
+            // Comments trump everything else
             var commentStartIndex = line.IndexOf(commentMarker);
-            result.Data = (commentStartIndex == -1)
-                ? line
-                : line.Substring(0, commentStartIndex)
-                ;
-            result.Comment = (commentStartIndex == -1)
-                ? null
-                : line.Substring(commentStartIndex + commentMarker.Length)
-                ;
+            if (commentStartIndex >= 0)
+            {
+                result.Comment = line.Substring(commentStartIndex + commentMarker.Length);
+                line = line.Substring(0, commentStartIndex);
+            }
+
+            var assignmentStartIndex = line.IndexOf(assignmentMarker);
+            if (assignmentStartIndex >= 0)
+            {
+                result.Value = line.Substring(assignmentStartIndex + assignmentMarker.Length);
+                line = line.Substring(0, assignmentStartIndex);
+            }
+
+            result.Data = line;
 
             return result;
         }
