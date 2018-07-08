@@ -32,42 +32,93 @@ namespace parse
             return results;
         }
 
-        private List<ConfigNode> ParseBlocksIntoNodes(IList<InputLine> fileLines)
+        public ConfigNode ParseBlocksIntoNodes(IList<InputLine> fileLines)
         {
-            throw new NotImplementedException();
+            var root = new ConfigNode();
+            var currentNode = root;
+            var nodeStack = new Stack<ConfigNode>();
+            var currentBlockId = -1;
+            var currentDepth = -1;
+
+            foreach(var line in fileLines)
+            {
+                if (line.BlockDepth > currentDepth) // go deeper
+                {
+                    nodeStack.Push(currentNode);
+                    currentNode = new ConfigNode
+                    {
+                        Type = line.Data.ToEnumOrDefault<NodeType>(),
+                        TypeIdentifier = line.Data,
+                    };
+                    nodeStack.Peek().Nodes.Add(currentNode);
+                }
+                else if (line.BlockDepth < currentDepth) // go shallower
+                {
+                    currentNode = nodeStack.Pop();
+                }
+                else if (line.BlockId != currentBlockId) // new block at same level
+                {
+                    currentNode = new ConfigNode
+                    {
+                        Type = line.Data.ToEnumOrDefault<NodeType>(),
+                        TypeIdentifier = line.Data,
+                    };
+                    nodeStack.Peek().Nodes.Add(currentNode);
+                }
+
+                currentNode.InputLines.Add(line);
+
+                currentBlockId = line.BlockId;
+                currentDepth = line.BlockDepth;
+            }
+            
+            return root;
         }
 
         public void IdentifyBlocks(IList<InputLine> fileLines)
         {
+            var idStack = new Stack<int>();
             int blockId = 0;
+            int runningBlockId = 0;
             int depth = 0;
-            for(var i = 0; i <= fileLines.Count; i++)
+            for(var i = 0; i < fileLines.Count; i++)
             {
+                fileLines[i].BlockId = blockId;
+                fileLines[i].BlockDepth = depth;
+
                 if (IsOpeningBrace(fileLines[i].Data))
                 {
-                    blockId++;
+                    idStack.Push(blockId);
+                    runningBlockId++;
+                    blockId = runningBlockId;
                     depth++;
 
-                    MarkBlockIdentifier(i, fileLines, blockId, depth);
+                    MarkBlockIdentifier(i, fileLines, runningBlockId, idStack.Peek(), depth);
                 }
 
                 if (IsClosingBrace(fileLines[i].Data))
                 {
                     depth--;
-                }
+                    blockId = idStack.Pop();
 
-                fileLines[i].BlockId = blockId;
-                fileLines[i].BlockDepth = depth;
+                    if (depth < 0){
+                        var e = new Exception("Found too many closing braces!");
+                        e.Data["rawLineNumber"] = fileLines[i].RawLineNumber;
+                        e.Data["blockId"] = blockId;
+                    }
+                }
             }
+
+            //TODO: Throw exception here if we don't end up back at depth zero?
         }
 
         ///<summary>Walk backwards in previous block/depth to find block identifier</summary>
-        private void MarkBlockIdentifier(int openingBraceIndex, IList<InputLine> fileLines, int blockId, int depth)
+        private void MarkBlockIdentifier(int openingBraceIndex, IList<InputLine> fileLines, int blockId, int parentBlockId, int depth)
         {
-            for (var i = openingBraceIndex - 1; i >= 0; i--)
+            for (var i = openingBraceIndex; i >= 0; i--)
             {
                 if (fileLines[i].BlockDepth != depth - 1) return;
-                if (fileLines[i].BlockId != blockId - 1) return;
+                if (fileLines[i].BlockId != parentBlockId) return;
 
                 fileLines[i].BlockDepth = depth;
                 fileLines[i].BlockId = blockId;
