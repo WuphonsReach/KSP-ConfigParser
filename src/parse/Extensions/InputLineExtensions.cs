@@ -13,12 +13,29 @@ namespace parse.Extensions
         {
 
             var result = new List<InputLine>();
-//            var braceIndex = FindNextBrace(line.Data);
-//            while (braceIndex >= 0)
-//            {
-//
-//            }
-//            if (!string.IsNullOrWhiteSpace(line.Data))
+
+            var braceIndex = FindNextBrace(line.Data);
+            while (braceIndex >= 0)
+            {                
+                // Is there anything before the brace that is not whitespace?
+                if (braceIndex > 0) 
+                { 
+                    var newData = line.Data.Substring(0, braceIndex).Trim();
+                    if (!string.IsNullOrWhiteSpace(newData)) result.Add(new InputLine{ Data = newData }); 
+                }
+
+                // Add the brace as a new element
+                result.Add(new InputLine{ Data = line.Data.Substring(braceIndex, 1) });
+
+                // Trim everything up to and including the found brace off the input
+                if (line.Data.Length >= braceIndex + 1)
+                    line.Data = line.Data.Substring(braceIndex + 1).Trim();
+
+                braceIndex = FindNextBrace(line.Data);
+            }
+            // Was there anything left-over after the last brace?
+            line.Data = line.Data.Trim();
+            if (!string.IsNullOrWhiteSpace(line.Data)) result.Add(line);
             
             return result;
         }
