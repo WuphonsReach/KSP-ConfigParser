@@ -15,7 +15,7 @@ namespace parse
                 FilePath = filePath,
             };
 
-            var lines = new List<string>();
+            var lines = new List<InputLine>();
 
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -28,7 +28,10 @@ namespace parse
                         if (!string.IsNullOrWhiteSpace(line.Data))
                         {
                             // We have an interesting line with data
-                            lines.Add(line.Data.Trim());
+                            var candidateData = line.Data.Trim();
+                            // open/close curly braces should be their own element
+                            // so if we find such a situation, we need to break the
+                            // line apart
                         }
                     }
                 }
