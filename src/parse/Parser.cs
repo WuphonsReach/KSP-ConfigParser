@@ -28,7 +28,7 @@ namespace parse
                         if (!string.IsNullOrWhiteSpace(line.Data))
                         {
                             // We have an interesting line with data
-                            var candidates = line.SplitLineOnBraces();
+                            var candidates = line.SplitLineDataOnBraces();
                             lines.AddRange(candidates);
                         }
                     }

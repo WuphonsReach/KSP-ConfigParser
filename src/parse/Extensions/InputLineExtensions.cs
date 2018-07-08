@@ -9,7 +9,7 @@ namespace parse.Extensions
         ///curly braces.  Those curly braces should always be on their
         ///own line, so we need to split the existing line object into
         ///multiple line objects.</summary>
-        public static IEnumerable<InputLine> SplitLineOnBraces(this InputLine line)
+        public static IEnumerable<InputLine> SplitLineDataOnBraces(this InputLine line)
         {
 
             var result = new List<InputLine>();
