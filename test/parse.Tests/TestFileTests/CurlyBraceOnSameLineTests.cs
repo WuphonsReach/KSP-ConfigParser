@@ -4,12 +4,12 @@ using Xunit;
 
 namespace parse.Tests.TestFileTests
 {
-    public class CurlyBraceOnSameLine : ParserTests
+    public class CurlyBraceOnSameLineTests : ParserTests
     {
         private const string _fileName = TestFileNames.CurlyBraceOnSameLine;
         private readonly ConfigFile _configFile;
 
-        public CurlyBraceOnSameLine()
+        public CurlyBraceOnSameLineTests()
         {
             _configFile = GetParsedConfigFile(_fileName);
         }
