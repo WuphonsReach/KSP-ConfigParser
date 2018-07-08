@@ -49,6 +49,7 @@ namespace parse
                     {
                         Type = line.Data.ToEnumOrDefault<NodeType>(),
                         TypeIdentifier = line.Data,
+                        Parent = nodeStack.Peek(),
                     };
                     nodeStack.Peek().Nodes.Add(currentNode);
                 }
