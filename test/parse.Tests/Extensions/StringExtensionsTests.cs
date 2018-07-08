@@ -5,6 +5,8 @@ namespace parse.Tests.Extensions
 {
     public class StringExtensionsTests
     {
+        //TODO: Use MemberData and split this test into three separate tests
+
         [Theory]
         [InlineData(null, null, null, null)]
         [InlineData("", "", null, null)]
@@ -19,7 +21,8 @@ namespace parse.Tests.Extensions
         [InlineData("PART {", "PART {", null, null)]
         [InlineData("PART { v = 2 // test", "PART { v", " 2 ", " test")]
         [InlineData("y=4 //C=DV", "y", "4 ", "C=DV")]
-        public void ParseCorrectly(string input, string expectedData, string expectedValue, string expectedComment)
+        [InlineData("PART { // Y=4", "PART { ", null, " Y=4")]
+        public void ParseLine_works_correctly(string input, string expectedData, string expectedValue, string expectedComment)
         {
             var result = input.ParseLine();
             Assert.Equal(expectedData, result.Data);
