@@ -96,7 +96,7 @@ namespace parse.Tests.ParserMethodTests
         [InlineData(14, 0, 0)]
         public void IdentifyBlocks_blockWithTwoNodes_gives_correct_id_and_depth(int rawLineNumber, int expectedId, int expectedDepth)
         {
-            var inputs = Clone(_simpleBlock);
+            var inputs = Clone(_blockWithTwoNodes);
             _sut.IdentifyBlocks(inputs);
             AssertCorrectBlockId(expectedId, inputs, rawLineNumber);
             AssertCorrectBlockDepth(expectedDepth, inputs, rawLineNumber);
