@@ -5,11 +5,11 @@ namespace parse.Tests.TestFileTests
     public class MMCacheSimpleExampleTests : ParserTests
     {
         private const string _fileName = TestFileNames.MMCacheSimpleExample;
-        private readonly ConfigFile _result;
+        private readonly ConfigFile _configFile;
 
         public MMCacheSimpleExampleTests()
         {
-            _result = GetParsedConfigFile(_fileName);
+            _configFile = GetParsedConfigFile(_fileName);
         }
     }
 }
