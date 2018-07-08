@@ -67,6 +67,8 @@ namespace parse
                 }
 
                 currentNode.InputLines.Add(line);
+                if (line.IsAttributeDefinition()) 
+                    currentNode.AttributeDefinitions.Add(line.ToAttributeDefinition());
 
                 currentBlockId = line.BlockId;
                 currentDepth = line.BlockDepth;

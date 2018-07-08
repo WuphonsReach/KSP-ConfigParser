@@ -33,7 +33,7 @@ namespace parse.Tests.TestFileTests
         public void Part_has_attribute_and_value(string attributeName, string expectedValue)
         {
             var firstNode = _configFile.RootNode.Nodes.First();
-            var nameAttribute = firstNode.Attributes.First(x => x.Name == attributeName);
+            var nameAttribute = firstNode.AttributeDefinitions.First(x => x.Name == attributeName);
             Assert.Equal(expectedValue, nameAttribute.Value);
         }
 
@@ -60,7 +60,7 @@ namespace parse.Tests.TestFileTests
         {
             var firstNode = _configFile.RootNode.Nodes.First();
             var resourceNode = firstNode.Nodes.First(x => x.Type == NodeType.Resource);
-            var nameAttribute = resourceNode.Attributes.First(x => x.Name == attributeName);
+            var nameAttribute = resourceNode.AttributeDefinitions.First(x => x.Name == attributeName);
             Assert.Equal(expectedValue, nameAttribute.Value);
         }
 

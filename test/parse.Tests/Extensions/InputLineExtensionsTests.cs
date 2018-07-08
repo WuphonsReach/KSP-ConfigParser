@@ -25,5 +25,38 @@ namespace parse.Tests.Extensions
                 Assert.Equal(expected[i], results[i].Data);
             }
         }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData("=", false)]
+        [InlineData("A      =", false)]
+        [InlineData("B      =           X", true)]
+        [InlineData("   C=           Q", true)]
+        [InlineData(" D     =Z X Y Z", true)]
+        public void IsAttributeDefinition_gives_correct_result(string input, bool expected)
+        {
+            var line = new InputLine(1) { Data = input };
+            var result = line.IsAttributeDefinition();
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(null, null, null)]
+        [InlineData("", null, null)]
+        [InlineData("=", null, null)]
+        [InlineData("x=", null, null)]
+        [InlineData("=y", null, null)]
+        [InlineData("z=q", "z", "q")]
+        [InlineData("ax=bc", "ax", "bc")]
+        [InlineData("z1    =    q2    ", "z1", "q2")]
+        [InlineData("   z2    =    q3", "z2", "q3")]
+        public void ToAttributeDefinition_gives_correct_result(string input, string expectedName, string expectedValue)
+        {
+            var line = new InputLine(1) { Data = input };
+            var result = line.ToAttributeDefinition();
+            Assert.Equal(expectedName, result?.Name);
+            Assert.Equal(expectedValue, result?.Value);
+        }
     }
 }

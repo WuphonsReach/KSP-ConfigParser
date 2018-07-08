@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using parse.Models;
 
@@ -49,5 +50,26 @@ namespace parse.Extensions
             if (closeIndex == -1) return openIndex;
             return (closeIndex < openIndex) ? closeIndex : openIndex;
         }
+
+        public static bool IsAttributeDefinition(this InputLine line)
+        {
+            if (line == null || line.Data == null) return false;
+            var index = line.Data.IndexOf(Constants.AssignmentOperator);
+            if (index < 1) return false;
+            if (index >= line.Data.Length - 1) return false;
+            return true;
+        }
+
+        public static AttributeDefinition ToAttributeDefinition(this InputLine line)
+        {
+            if (!line.IsAttributeDefinition()) return null;
+            var index = line.Data.IndexOf(Constants.AssignmentOperator);
+
+            var result = new AttributeDefinition();
+            if (index > 0) result.Name = line.Data.Substring(0, index).Trim();
+            if (index < line.Data.Length) result.Value = line.Data.Substring(index + 1).Trim();
+            return result;
+        }
+
     }
 }

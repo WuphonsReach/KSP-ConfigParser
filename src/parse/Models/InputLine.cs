@@ -1,3 +1,5 @@
+using System;
+
 namespace parse.Models
 {
     public class InputLine

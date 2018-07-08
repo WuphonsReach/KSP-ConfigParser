@@ -1,6 +1,6 @@
 namespace parse.Models
 {
-    public class Attribute
+    public class AttributeDefinition
     {
         public string Name { get; set; }
         public string Value { get; set; }

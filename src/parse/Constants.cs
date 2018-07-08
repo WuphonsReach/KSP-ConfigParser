@@ -4,6 +4,6 @@ namespace parse
     {
         public const string OpeningBrace = "{";
         public const string ClosingBrace = "}";
-
+        public const string AssignmentOperator = "=";
     }
 }
