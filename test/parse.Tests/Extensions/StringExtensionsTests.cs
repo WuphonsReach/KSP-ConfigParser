@@ -24,7 +24,7 @@ namespace parse.Tests.Extensions
         [InlineData("PART { // Y=4", "PART {", "Y=4")]
         public void ParseLine_works_correctly(string input, string expectedData, string expectedComment)
         {
-            var result = input.ParseLine();
+            var result = input.ParseLine(1);
             Assert.Equal(expectedData, result.Data);
             Assert.Equal(expectedComment, result.Comment);
         }

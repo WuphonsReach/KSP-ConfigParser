@@ -5,11 +5,11 @@ namespace parse.Extensions
 {
     public static class StringExtensions
     {
-        public static InputLine ParseLine(this string line)
+        public static InputLine ParseLine(this string line, int rawLineNumber)
         {
             const string commentMarker = "//";
 
-            var result = new InputLine();
+            var result = new InputLine(rawLineNumber);
             if (line == null) return result;
 
             // Comments trump everything else

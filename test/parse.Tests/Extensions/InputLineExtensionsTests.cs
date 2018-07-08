@@ -16,7 +16,7 @@ namespace parse.Tests.Extensions
         [InlineData("PART { MODULE { X = 3 } } ", "PART", "{", "MODULE", "{", "X = 3", "}", "}")]
         public void SplitLineDataOnBraces_gives_correct_output(string input, params string[] expected)
         {
-            var inputLine = new InputLine { Data = input };
+            var inputLine = new InputLine(1) { Data = input };
             var results = inputLine.SplitLineDataOnBraces().ToArray();
 
             Assert.Equal(expected.Count(), results.Count());

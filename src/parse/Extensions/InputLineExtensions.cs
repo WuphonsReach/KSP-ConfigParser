@@ -21,11 +21,11 @@ namespace parse.Extensions
                 if (braceIndex > 0) 
                 { 
                     var newData = line.Data.Substring(0, braceIndex).Trim();
-                    if (!string.IsNullOrWhiteSpace(newData)) result.Add(new InputLine{ Data = newData }); 
+                    if (!string.IsNullOrWhiteSpace(newData)) result.Add(new InputLine(line.RawLineNumber) { Data = newData }); 
                 }
 
                 // Add the brace as a new element
-                result.Add(new InputLine{ Data = line.Data.Substring(braceIndex, 1) });
+                result.Add(new InputLine(line.RawLineNumber) { Data = line.Data.Substring(braceIndex, 1) });
 
                 // Trim everything up to and including the found brace off the input
                 if (line.Data.Length >= braceIndex + 1)
