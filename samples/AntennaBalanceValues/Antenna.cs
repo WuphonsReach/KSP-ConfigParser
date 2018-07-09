@@ -50,14 +50,16 @@ namespace AntennaBalanceValues
 		public string PartCost;
 		public string Mass;
 		
-		public string AntennaType;
+		public string Type;
 		public string PacketInterval;
 		public string PacketSize;
 		public string PacketResourceCost;
 		public string RequiredResource;
-		public string AntennaPower;
+		public string Power;
 		public string OptimumRange;
 		public string PacketeFloor;
 		public string PacketCeiling;
+		public string Combinable;
+		public string CombinableExponent;
     }
 }

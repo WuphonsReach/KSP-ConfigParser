@@ -110,15 +110,17 @@ namespace AntennaBalanceValues
                         )
                     );
 
-                antenna.AntennaType = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
+                antenna.Type = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
                 antenna.PacketInterval = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
                 antenna.PacketSize = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
                 antenna.PacketResourceCost = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
                 antenna.RequiredResource = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
-                antenna.AntennaPower = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
+                antenna.Power = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
                 antenna.OptimumRange = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
                 antenna.PacketeFloor = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
                 antenna.PacketCeiling = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
+                antenna.Combinable = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
+                antenna.CombinableExponent = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
 
                 results.Add(antenna);
             }
