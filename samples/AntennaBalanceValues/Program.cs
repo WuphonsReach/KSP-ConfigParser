@@ -30,6 +30,10 @@ namespace AntennaBalanceValues
             foreach(var filePath in filePaths)
             {
                 Console.WriteLine($"Path: {filePath}");
+                (string Folder, string FileName) info = SplitFilePath(filePath);
+                Console.WriteLine($"Folder: {info.Folder}");
+                Console.WriteLine($"FileName: {info.FileName}");
+
                 using (var stream = File.Open(filePath, FileMode.Open))
                 {
                     Console.WriteLine($"Length: {stream.Length}");
@@ -56,7 +60,11 @@ namespace AntennaBalanceValues
                         $"Part nodes with antennas: {partsWithAntennas.Count()}"
                         );
 
-                    results.AddRange(ConvertNodesToAntennaRecords(partsWithAntennas));
+                    results.AddRange(ConvertNodesToAntennaRecords(
+                        info.Folder, 
+                        info.FileName,
+                        partsWithAntennas
+                        ));
                 }                
                 Console.WriteLine($"Finished {filePath}");
                 Console.WriteLine();
@@ -70,15 +78,19 @@ namespace AntennaBalanceValues
             Console.WriteLine();
         }
 
-        private static IEnumerable<Antenna> ConvertNodesToAntennaRecords(IEnumerable<ConfigNode> partsWithAntennas)
+        private static IEnumerable<Antenna> ConvertNodesToAntennaRecords(
+            string directory,
+            string fileName,
+            IEnumerable<ConfigNode> partsWithAntennas
+            )
         {
             var results = new List<Antenna>();
             foreach (var part in partsWithAntennas)
             {
                 var antenna = new Antenna
                 {
-                    Folder = "",
-                    FileName = "",
+                    Folder = directory,
+                    FileName = fileName,
                 };
 
                 antenna.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
@@ -90,9 +102,45 @@ namespace AntennaBalanceValues
                 antenna.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
                 antenna.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
 
+                var module = part.Nodes.FirstOrDefault(x => 
+                    x.Type == NodeType.Module
+                    && x.AttributeDefinitions.Any(ad => 
+                        ad.Name == "name"
+                        && ad.Value == "ModuleDataTransmitter"
+                        )
+                    );
+
+                antenna.AntennaType = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
+                antenna.PacketInterval = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
+                antenna.PacketSize = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
+                antenna.PacketResourceCost = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
+                antenna.RequiredResource = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
+                antenna.AntennaPower = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
+                antenna.OptimumRange = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
+                antenna.PacketeFloor = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
+                antenna.PacketCeiling = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
+
                 results.Add(antenna);
             }
             return results;
+        }
+
+        private static (string folder, string fileName) SplitFilePath(string filePath)
+        {
+            var folder = "";
+            var fileName = filePath;
+
+            const string gameData = "GameData";
+            var gameDataIndex = filePath.IndexOf(gameData);
+            if (gameDataIndex >= 0)
+                filePath = filePath.Substring(gameDataIndex + gameData.Length);
+
+            //TODO: Use .NET standard methods to break down this file path
+            var lastSlashIndex = filePath.LastIndexOfAny(new char[]{ '/', '\\' });
+            if (lastSlashIndex > 0) folder = filePath.Substring(0, lastSlashIndex - 1);
+            if (lastSlashIndex >= 0) fileName = filePath.Substring(lastSlashIndex + 1);
+
+            return (folder, fileName);
         }
     }
 }

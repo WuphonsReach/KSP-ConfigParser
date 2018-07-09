@@ -51,6 +51,7 @@ namespace AntennaBalanceValues
 		public string PacketInterval;
 		public string PacketSize;
 		public string PacketResourceCost;
+		public string RequiredResource;
 		public string AntennaPower;
 		public string OptimumRange;
 		public string PacketeFloor;
