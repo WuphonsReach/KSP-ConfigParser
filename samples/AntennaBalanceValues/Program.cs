@@ -75,9 +75,22 @@ namespace AntennaBalanceValues
             var results = new List<Antenna>();
             foreach (var part in partsWithAntennas)
             {
-                
+                var antenna = new Antenna
+                {
+                    Folder = "",
+                    FileName = "",
+                };
 
+                antenna.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
+                antenna.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
+                antenna.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
+                antenna.Manufacturer = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "manufacturer")?.Value;
+                antenna.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
+                antenna.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
+                antenna.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
+                antenna.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
 
+                results.Add(antenna);
             }
             return results;
         }
