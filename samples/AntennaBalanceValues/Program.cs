@@ -93,6 +93,13 @@ namespace AntennaBalanceValues
                     FileName = fileName,
                 };
 
+                if (string.IsNullOrWhiteSpace(directory))
+                {
+                    var parent = part.Parent;
+                    if (parent?.Type == NodeType.UrlConfig)
+                        antenna.Folder = parent?.AttributeDefinitions.FirstOrDefault(x => x.Name == "parentUrl")?.Value;
+                }
+
                 antenna.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
                 antenna.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
                 antenna.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
