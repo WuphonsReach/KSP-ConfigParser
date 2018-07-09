@@ -39,7 +39,21 @@ namespace AntennaBalanceValues
         public string Folder;
         public string FileName;
         public string Name;
+		public string Title;
         public string Author;
         public string Manufacturer;
+		public string Category;
+		public string EntryCost;
+		public string PartCost;
+		public string Mass;
+		
+		public string AntennaType;
+		public string PacketInterval;
+		public string PacketSize;
+		public string PacketResourceCost;
+		public string AntennaPower;
+		public string OptimumRange;
+		public string PacketeFloor;
+		public string PacketCeiling;
     }
 }
