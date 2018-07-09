@@ -126,12 +126,9 @@ namespace parse
                 fileLines[i].BlockDepth = depth;
                 fileLines[i].BlockId = blockId;
 
-                const string blockIdentifierRegexPattern = @"^[a-zA-Z0-9_-]+$";
-                Regex blockIdentifierRegex = new Regex(blockIdentifierRegexPattern);
-                if (blockIdentifierRegex.Match(fileLines[i].Data).Success)
-                {
-                    return;
-                }
+                // The first non-blank data element prior to the opening brace is the block identifier
+                if (i < openingBraceIndex
+                    && !string.IsNullOrWhiteSpace(fileLines[i].Data)) return;
             }
         }
 
