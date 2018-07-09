@@ -1,5 +1,7 @@
 ﻿using FileHelpers;
 using parse;
+using parse.Extensions;
+using parse.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,13 +34,52 @@ namespace AntennaBalanceValues
                 {
                     Console.WriteLine($"Length: {stream.Length}");
                     var configFile = parser.ParseConfigFile(filePath, stream);
+
+                    var nodes = configFile.RootNode.Descendants();
+                    var partNodes = nodes.Where(x => x.Type == NodeType.Part).ToList();
+                    Console.WriteLine(
+                        $"Part nodes: {partNodes.Count}"
+                        );
+
+                    var partsWithAntennas = partNodes
+                        .Where(x => x.Nodes
+                            .Any(n => 
+                                n.Type == NodeType.Module
+                                && n.AttributeDefinitions.Any(ad => 
+                                    ad.Name == "name"
+                                    && ad.Value == "ModuleDataTransmitter"
+                                    )
+                                )
+                            )
+                        ;
+                    Console.WriteLine(
+                        $"Part nodes with antennas: {partsWithAntennas.Count()}"
+                        );
+
+                    results.AddRange(ConvertNodesToAntennaRecords(partsWithAntennas));
                 }                
+                Console.WriteLine($"Finished {filePath}");
                 Console.WriteLine();
             }
 
+            Console.WriteLine("Writing output.csv");
             var engine = new FileHelperEngine<Antenna>();
-            
+            engine.HeaderText = engine.GetFileHeader();
+            engine.WriteFile("output.csv", results);
+            Console.WriteLine("Completed.");
+            Console.WriteLine();
+        }
 
+        private static IEnumerable<Antenna> ConvertNodesToAntennaRecords(IEnumerable<ConfigNode> partsWithAntennas)
+        {
+            var results = new List<Antenna>();
+            foreach (var part in partsWithAntennas)
+            {
+                
+
+
+            }
+            return results;
         }
     }
 }
