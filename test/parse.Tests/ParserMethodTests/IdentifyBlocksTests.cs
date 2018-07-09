@@ -106,5 +106,34 @@ namespace parse.Tests.ParserMethodTests
             AssertCorrectBlockDepth(expectedDepth, inputs, rawLineNumber);
         }
 
+        private readonly IList<InputLine> _weirdScanSatBlock = new List<InputLine>{
+                new InputLine(1) { Data = "OVERRIDES" },
+                new InputLine(2) { Data = "{" },
+                new InputLine(3) { Data = "SCANsat/Icons/.*" },
+                new InputLine(4) { Data = "{" },
+                new InputLine(5) { Data = "compress = true" },
+                new InputLine(6) { Data = "mipmaps = false" },
+                new InputLine(7) { Data = "make_not_readable = false" },
+                new InputLine(8) { Data = "}" },
+                new InputLine(9) { Data = "}" },
+            };
+
+        [Theory]
+        [InlineData(1, 1, 1)]
+        [InlineData(2, 1, 1)]
+        [InlineData(3, 2, 2)]
+        [InlineData(4, 2, 2)]
+        [InlineData(5, 2, 2)]
+        [InlineData(6, 2, 2)]
+        [InlineData(7, 2, 2)]
+        [InlineData(8, 2, 2)]
+        [InlineData(9, 1, 1)]
+        public void IdentifyBlocks_weirdScanSatBlock_gives_correct_id_and_depth(int rawLineNumber, int expectedId, int expectedDepth)
+        {
+            var inputs = Clone(_weirdScanSatBlock);
+            _sut.IdentifyBlocks(inputs);
+            AssertCorrectBlockId(expectedId, inputs, rawLineNumber);
+            AssertCorrectBlockDepth(expectedDepth, inputs, rawLineNumber);
+        }
     }
 }
