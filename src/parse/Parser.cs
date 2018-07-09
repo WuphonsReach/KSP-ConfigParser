@@ -39,6 +39,7 @@ namespace parse
             var nodeStack = new Stack<ConfigNode>();
             var currentBlockId = -1;
             var currentDepth = -1;
+            nodeStack.Push(currentNode);
 
             foreach(var line in fileLines)
             {
