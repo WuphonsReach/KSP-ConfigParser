@@ -16,20 +16,24 @@ namespace AntennaBalanceValues
             var filePaths = args?.ToList();
             if (filePaths == null || filePaths.Count == 0) 
                 filePaths = new List<string>{
-                    "~/WR/ksp/1.4.4/Play/GameData/ModuleManager.ConfigCache"
+                    "/home/syb/WR/ksp/1.4.4/Play/GameData/ModuleManager.ConfigCache"
                     };
 
-            Console.WriteLine(
-                $"{Name}: {string.Join(",", filePaths)}"
-                );
+            Console.WriteLine($"{Name}:");
             Console.WriteLine();
 
             var results = new List<Antenna>();
+            var parser = new Parser();
 
             foreach(var filePath in filePaths)
             {
-                FileStream stream = File.Open(filePath, FileMode.Open);
-                
+                Console.WriteLine($"Path: {filePath}");
+                using (var stream = File.Open(filePath, FileMode.Open))
+                {
+                    Console.WriteLine($"Length: {stream.Length}");
+                    var configFile = parser.ParseConfigFile(filePath, stream);
+                }                
+                Console.WriteLine();
             }
 
             var engine = new FileHelperEngine<Antenna>();
