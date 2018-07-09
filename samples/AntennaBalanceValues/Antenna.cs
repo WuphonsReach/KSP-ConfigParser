@@ -39,8 +39,11 @@ namespace AntennaBalanceValues
         public string Folder;
         public string FileName;
         public string Name;
+		[FieldQuoted('"', QuoteMode.OptionalForRead)]
 		public string Title;
+		[FieldQuoted('"', QuoteMode.OptionalForRead)]
         public string Author;
+		[FieldQuoted('"', QuoteMode.OptionalForRead)]
         public string Manufacturer;
 		public string Category;
 		public string EntryCost;
