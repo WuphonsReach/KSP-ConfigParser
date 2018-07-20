@@ -127,7 +127,7 @@ namespace AntennaBalanceValues
                 record.Combinable = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
                 record.CombinableExponent = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
 
-                results.Add(recoord);
+                results.Add(record);
             }
             return results;
         }
