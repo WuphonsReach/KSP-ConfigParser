@@ -40,7 +40,7 @@ namespace SamplesCommon
 
             var firstSlashIndex = folder.IndexOfAny(new char[]{ '/', '\\' });
             if (firstSlashIndex > 0)
-                topFolder = folder.Substring(0, firstSlashIndex - 1);
+                topFolder = folder.Substring(0, firstSlashIndex);
 
             return (topFolder, folder, fileName);
         }
