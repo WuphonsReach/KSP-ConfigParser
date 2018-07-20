@@ -30,7 +30,8 @@ namespace AntennaBalanceValues
             foreach(var filePath in filePaths)
             {
                 Console.WriteLine($"Path: {filePath}");
-                (string Folder, string FileName) info = SplitFilePath(filePath);
+                (string TopFolder, string Folder, string FileName) info = SplitFilePath(filePath);
+                Console.WriteLine($"TopFolder: {info.TopFolder}");
                 Console.WriteLine($"Folder: {info.Folder}");
                 Console.WriteLine($"FileName: {info.FileName}");
 
@@ -61,6 +62,7 @@ namespace AntennaBalanceValues
                         );
 
                     results.AddRange(ConvertNodesToAntennaRecords(
+                        info.TopFolder,
                         info.Folder, 
                         info.FileName,
                         partsWithAntennas
@@ -79,6 +81,7 @@ namespace AntennaBalanceValues
         }
 
         private static IEnumerable<ExportRecord> ConvertNodesToAntennaRecords(
+            string topDirectory,
             string directory,
             string fileName,
             IEnumerable<ConfigNode> partsWithAntennas
@@ -87,27 +90,21 @@ namespace AntennaBalanceValues
             var results = new List<ExportRecord>();
             foreach (var part in partsWithAntennas)
             {
-                var antenna = new ExportRecord
+                var record = new ExportRecord
                 {
+                    TopFolder = topDirectory,
                     Folder = directory,
                     FileName = fileName,
                 };
 
-                if (string.IsNullOrWhiteSpace(directory))
-                {
-                    var parent = part.Parent;
-                    if (parent?.Type == NodeType.UrlConfig)
-                        antenna.Folder = parent?.AttributeDefinitions.FirstOrDefault(x => x.Name == "parentUrl")?.Value;
-                }
-
-                antenna.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
-                antenna.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
-                antenna.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
-                antenna.Manufacturer = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "manufacturer")?.Value;
-                antenna.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
-                antenna.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
-                antenna.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
-                antenna.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
+                record.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
+                record.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
+                record.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
+                record.Manufacturer = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "manufacturer")?.Value;
+                record.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
+                record.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
+                record.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
+                recoord.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
 
                 var module = part.Nodes.FirstOrDefault(x => 
                     x.Type == NodeType.Module
@@ -117,25 +114,16 @@ namespace AntennaBalanceValues
                         )
                     );
 
-                antenna.Type = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
-                antenna.PacketInterval = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
-                antenna.PacketSize = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
-                antenna.PacketResourceCost = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
-                antenna.RequiredResource = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
-                antenna.Power = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
-                antenna.OptimumRange = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
-                antenna.PacketeFloor = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
-                antenna.PacketCeiling = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
-                antenna.Combinable = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
-                antenna.CombinableExponent = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
-
-                results.Add(antenna);
+                results.Add(recoord);
             }
             return results;
         }
 
-        private static (string folder, string fileName) SplitFilePath(string filePath)
+        private static (string topFolder, string folder, string fileName) SplitFilePath(
+            string filePath
+            )
         {
+            var topFolder = "";
             var folder = "";
             var fileName = filePath;
 
@@ -149,7 +137,10 @@ namespace AntennaBalanceValues
             if (lastSlashIndex > 0) folder = filePath.Substring(0, lastSlashIndex - 1);
             if (lastSlashIndex >= 0) fileName = filePath.Substring(lastSlashIndex + 1);
 
-            return (folder, fileName);
+            var firstFolderSlashIndex = folder.IndexOfAny(new char[]{ '/', '\\' });
+            if (firstFolderSlashIndex > 0) topFolder = folder.Substring(0, firstFolderSlashIndex - 1);
+
+            return (topFolder, folder, fileName);
         }
     }
 }
