@@ -34,8 +34,9 @@ namespace AntennaBalanceValues
  */
 
     [DelimitedRecord(",")]
-    public class Antenna
+    public class ExportRecord
     {
+		public string TopFolder;
         public string Folder;
         public string FileName;
         public string Name;

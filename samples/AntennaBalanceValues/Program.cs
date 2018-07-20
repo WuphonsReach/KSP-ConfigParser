@@ -2,6 +2,7 @@
 using parse;
 using parse.Extensions;
 using parse.Models;
+using SamplesCommon;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,22 +18,20 @@ namespace AntennaBalanceValues
         {
             var filePaths = args?.ToList();
             if (filePaths == null || filePaths.Count == 0) 
-                filePaths = new List<string>{
-                    "/home/syb/WR/ksp/1.4.4/Play/GameData/ModuleManager.ConfigCache"
-                    };
+            {
+                Common.PrintUsage(Name);
+                return;
+            }
 
             Console.WriteLine($"{Name}:");
             Console.WriteLine();
 
-            var results = new List<Antenna>();
+            var results = new List<ExportRecord>();
             var parser = new Parser();
 
             foreach(var filePath in filePaths)
             {
                 Console.WriteLine($"Path: {filePath}");
-                (string Folder, string FileName) info = SplitFilePath(filePath);
-                Console.WriteLine($"Folder: {info.Folder}");
-                Console.WriteLine($"FileName: {info.FileName}");
 
                 using (var stream = File.Open(filePath, FileMode.Open))
                 {
@@ -60,9 +59,8 @@ namespace AntennaBalanceValues
                         $"Part nodes with antennas: {partsWithAntennas.Count()}"
                         );
 
-                    results.AddRange(ConvertNodesToAntennaRecords(
-                        info.Folder, 
-                        info.FileName,
+                    results.AddRange(ConvertNodesToExportRecords(
+                        filePath,
                         partsWithAntennas
                         ));
                 }                
@@ -71,43 +69,47 @@ namespace AntennaBalanceValues
             }
 
             Console.WriteLine($"Writing {Name}.csv");
-            var engine = new FileHelperEngine<Antenna>();
+            var engine = new FileHelperEngine<ExportRecord>();
             engine.HeaderText = engine.GetFileHeader();
             engine.WriteFile($"{Name}.csv", results);
             Console.WriteLine("Completed.");
             Console.WriteLine();
         }
 
-        private static IEnumerable<Antenna> ConvertNodesToAntennaRecords(
-            string directory,
-            string fileName,
+        private static IEnumerable<ExportRecord> ConvertNodesToExportRecords(
+            string filePath,
             IEnumerable<ConfigNode> partsWithAntennas
             )
         {
-            var results = new List<Antenna>();
+            var results = new List<ExportRecord>();
             foreach (var part in partsWithAntennas)
             {
-                var antenna = new Antenna
-                {
-                    Folder = directory,
-                    FileName = fileName,
-                };
-
-                if (string.IsNullOrWhiteSpace(directory))
+                (string TopFolder, string Folder, string FileName) info = Common.SplitFilePath(filePath);
+                if (string.IsNullOrWhiteSpace(info.Folder))
                 {
                     var parent = part.Parent;
                     if (parent?.Type == NodeType.UrlConfig)
-                        antenna.Folder = parent?.AttributeDefinitions.FirstOrDefault(x => x.Name == "parentUrl")?.Value;
+                    {
+                        var parentUrl = parent?.AttributeDefinitions.FirstOrDefault(x => x.Name == "parentUrl")?.Value;
+                        info = Common.SplitFilePath(filePath, parentUrl);
+                    }
                 }
 
-                antenna.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
-                antenna.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
-                antenna.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
-                antenna.Manufacturer = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "manufacturer")?.Value;
-                antenna.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
-                antenna.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
-                antenna.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
-                antenna.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
+                var record = new ExportRecord
+                {
+                    TopFolder = info.TopFolder,
+                    Folder = info.Folder,
+                    FileName = info.FileName,
+                };
+
+                record.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
+                record.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
+                record.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
+                record.Manufacturer = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "manufacturer")?.Value;
+                record.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
+                record.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
+                record.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
+                record.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
 
                 var module = part.Nodes.FirstOrDefault(x => 
                     x.Type == NodeType.Module
@@ -117,39 +119,21 @@ namespace AntennaBalanceValues
                         )
                     );
 
-                antenna.Type = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
-                antenna.PacketInterval = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
-                antenna.PacketSize = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
-                antenna.PacketResourceCost = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
-                antenna.RequiredResource = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
-                antenna.Power = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
-                antenna.OptimumRange = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
-                antenna.PacketeFloor = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
-                antenna.PacketCeiling = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
-                antenna.Combinable = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
-                antenna.CombinableExponent = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
+                record.Type = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
+                record.PacketInterval = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
+                record.PacketSize = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
+                record.PacketResourceCost = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
+                record.RequiredResource = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
+                record.Power = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
+                record.OptimumRange = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
+                record.PacketeFloor = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
+                record.PacketCeiling = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
+                record.Combinable = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
+                record.CombinableExponent = module?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
 
-                results.Add(antenna);
+                results.Add(record);
             }
             return results;
-        }
-
-        private static (string folder, string fileName) SplitFilePath(string filePath)
-        {
-            var folder = "";
-            var fileName = filePath;
-
-            const string gameData = "GameData";
-            var gameDataIndex = filePath.IndexOf(gameData);
-            if (gameDataIndex >= 0)
-                filePath = filePath.Substring(gameDataIndex + gameData.Length);
-
-            //TODO: Use .NET standard methods to break down this file path
-            var lastSlashIndex = filePath.LastIndexOfAny(new char[]{ '/', '\\' });
-            if (lastSlashIndex > 0) folder = filePath.Substring(0, lastSlashIndex - 1);
-            if (lastSlashIndex >= 0) fileName = filePath.Substring(lastSlashIndex + 1);
-
-            return (folder, fileName);
         }
     }
 }

@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\parse\parse.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

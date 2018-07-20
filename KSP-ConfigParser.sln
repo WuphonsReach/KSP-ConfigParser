@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "parse.Tests", "test\parse.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProbeCoreValues", "samples\ProbeCoreValues\ProbeCoreValues.csproj", "{D226384E-D0F5-4744-B83C-95037559E963}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "samples\Common\Common.csproj", "{B6B00AAB-9EDF-42F9-8A88-A63A1B00DBC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplesCommon", "samples\SamplesCommon\SamplesCommon.csproj", "{B6B00AAB-9EDF-42F9-8A88-A63A1B00DBC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

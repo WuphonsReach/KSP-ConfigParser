@@ -2,6 +2,7 @@
 using parse;
 using parse.Extensions;
 using parse.Models;
+using SamplesCommon;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,10 +18,11 @@ namespace AntennaBalanceValues
         {
             var filePaths = args?.ToList();
             if (filePaths == null || filePaths.Count == 0) 
-                filePaths = new List<string>{
-                    "/home/syb/WR/ksp/1.4.4/Play/GameData/ModuleManager.ConfigCache"
-                    };
-
+            {
+                Common.PrintUsage(Name);
+                return;
+            }
+                
             Console.WriteLine($"{Name}:");
             Console.WriteLine();
 
@@ -30,10 +32,6 @@ namespace AntennaBalanceValues
             foreach(var filePath in filePaths)
             {
                 Console.WriteLine($"Path: {filePath}");
-                (string TopFolder, string Folder, string FileName) info = SplitFilePath(filePath);
-                Console.WriteLine($"TopFolder: {info.TopFolder}");
-                Console.WriteLine($"Folder: {info.Folder}");
-                Console.WriteLine($"FileName: {info.FileName}");
 
                 using (var stream = File.Open(filePath, FileMode.Open))
                 {
@@ -62,10 +60,8 @@ namespace AntennaBalanceValues
                         $"Part nodes with ModuleCommand: {partsWithModuleCommand.Count()}"
                         );
 
-                    results.AddRange(ConvertNodesToAntennaRecords(
-                        info.TopFolder,
-                        info.Folder, 
-                        info.FileName,
+                    results.AddRange(ConvertNodesToExportRecords(
+                        filePath,
                         partsWithModuleCommand
                         ));
                 }                
@@ -81,21 +77,30 @@ namespace AntennaBalanceValues
             Console.WriteLine();
         }
 
-        private static IEnumerable<ExportRecord> ConvertNodesToAntennaRecords(
-            string topDirectory,
-            string directory,
-            string fileName,
+        private static IEnumerable<ExportRecord> ConvertNodesToExportRecords(
+            string filePath,
             IEnumerable<ConfigNode> partsWithAntennas
             )
         {
             var results = new List<ExportRecord>();
             foreach (var part in partsWithAntennas)
             {
+                (string TopFolder, string Folder, string FileName) info = Common.SplitFilePath(filePath);
+                if (string.IsNullOrWhiteSpace(info.Folder))
+                {
+                    var parent = part.Parent;
+                    if (parent?.Type == NodeType.UrlConfig)
+                    {
+                        var parentUrl = parent?.AttributeDefinitions.FirstOrDefault(x => x.Name == "parentUrl")?.Value;
+                        info = Common.SplitFilePath(filePath, parentUrl);
+                    }
+                }
+
                 var record = new ExportRecord
                 {
-                    TopFolder = topDirectory,
-                    Folder = directory,
-                    FileName = fileName,
+                    TopFolder = info.TopFolder,
+                    Folder = info.Folder,
+                    FileName = info.FileName,
                 };
                 record.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
                 record.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
@@ -167,30 +172,6 @@ namespace AntennaBalanceValues
                 results.Add(record);
             }
             return results;
-        }
-
-        private static (string topFolder, string folder, string fileName) SplitFilePath(
-            string filePath
-            )
-        {
-            var topFolder = "";
-            var folder = "";
-            var fileName = filePath;
-
-            const string gameData = "GameData";
-            var gameDataIndex = filePath.IndexOf(gameData);
-            if (gameDataIndex >= 0)
-                filePath = filePath.Substring(gameDataIndex + gameData.Length);
-
-            //TODO: Use .NET standard methods to break down this file path
-            var lastSlashIndex = filePath.LastIndexOfAny(new char[]{ '/', '\\' });
-            if (lastSlashIndex > 0) folder = filePath.Substring(0, lastSlashIndex - 1);
-            if (lastSlashIndex >= 0) fileName = filePath.Substring(lastSlashIndex + 1);
-
-            var firstFolderSlashIndex = folder.IndexOfAny(new char[]{ '/', '\\' });
-            if (firstFolderSlashIndex > 0) topFolder = folder.Substring(0, firstFolderSlashIndex - 1);
-
-            return (topFolder, folder, fileName);
         }
     }
 }
