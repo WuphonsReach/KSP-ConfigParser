@@ -46,26 +46,27 @@ namespace AntennaBalanceValues
                         $"Part nodes: {partNodes.Count}"
                         );
 
-                    var partsWithAntennas = partNodes
+                    var partsWithModuleCommand = partNodes
                         .Where(x => x.Nodes
                             .Any(n => 
                                 n.Type == NodeType.Module
                                 && n.AttributeDefinitions.Any(ad => 
                                     ad.Name == "name"
-                                    && ad.Value == "ModuleDataTransmitter"
+                                    && ad.Value == "ModuleCommand"
                                     )
                                 )
                             )
                         ;
+
                     Console.WriteLine(
-                        $"Part nodes with antennas: {partsWithAntennas.Count()}"
+                        $"Part nodes with ModuleCommand: {partsWithModuleCommand.Count()}"
                         );
 
                     results.AddRange(ConvertNodesToAntennaRecords(
                         info.TopFolder,
                         info.Folder, 
                         info.FileName,
-                        partsWithAntennas
+                        partsWithModuleCommand
                         ));
                 }                
                 Console.WriteLine($"Finished {filePath}");
@@ -104,15 +105,27 @@ namespace AntennaBalanceValues
                 record.Category = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "category")?.Value;
                 record.EntryCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "entryCost")?.Value;
                 record.PartCost = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "cost")?.Value;
-                recoord.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
+                record.Mass = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "mass")?.Value;
 
-                var module = part.Nodes.FirstOrDefault(x => 
+                var antenna = part.Nodes.FirstOrDefault(x => 
                     x.Type == NodeType.Module
                     && x.AttributeDefinitions.Any(ad => 
                         ad.Name == "name"
                         && ad.Value == "ModuleDataTransmitter"
                         )
                     );
+
+                record.Type = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
+                record.PacketInterval = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
+                record.PacketSize = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
+                record.PacketResourceCost = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetResourceCost")?.Value;
+                record.RequiredResource = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "requiredResource")?.Value;
+                record.Power = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaPower")?.Value;
+                record.OptimumRange = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "optimumRange")?.Value;
+                record.PacketeFloor = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetFloor")?.Value;
+                record.PacketCeiling = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
+                record.Combinable = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
+                record.CombinableExponent = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
 
                 results.Add(recoord);
             }
