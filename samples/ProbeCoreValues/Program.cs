@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AntennaBalanceValues
+namespace ProbeCoreValues
 {
     public class Program
     {

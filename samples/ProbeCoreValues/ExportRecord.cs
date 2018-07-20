@@ -1,6 +1,6 @@
 using FileHelpers;
 
-namespace AntennaBalanceValues
+namespace ProbeCoreValues
 {
 
 /*
