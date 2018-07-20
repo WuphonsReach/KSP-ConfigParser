@@ -70,10 +70,10 @@ namespace AntennaBalanceValues
                 Console.WriteLine();
             }
 
-            Console.WriteLine("Writing output.csv");
+            Console.WriteLine($"Writing {Name}.csv");
             var engine = new FileHelperEngine<Antenna>();
             engine.HeaderText = engine.GetFileHeader();
-            engine.WriteFile("output.csv", results);
+            engine.WriteFile($"{Name}.csv", results);
             Console.WriteLine("Completed.");
             Console.WriteLine();
         }

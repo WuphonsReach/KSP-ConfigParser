@@ -333,4 +333,4 @@ ASALocalRun/
 .vscode/
 
 
-output\.csv
+*\.csv
