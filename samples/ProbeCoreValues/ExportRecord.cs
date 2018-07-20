@@ -85,5 +85,20 @@ UrlConfig
 		public string PacketCeiling;
 		public string Combinable;
 		public string CombinableExponent;
+
+		// Command
+		public string MinimumCrew;
+		public string CrewCapacity;
+
+		// SAS
+		public string SasServiceLevel;
+
+		// EC
+		public string ElectricCharge;
+
+		// ReactionWheel
+		public string ReactionWheelPitchTorque;
+		public string ReactionWheelYawTorque;
+		public string ReactionWheelRollTorque;
     }
 }

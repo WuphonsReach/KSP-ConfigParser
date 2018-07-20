@@ -97,7 +97,6 @@ namespace AntennaBalanceValues
                     Folder = directory,
                     FileName = fileName,
                 };
-
                 record.Name = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "name")?.Value;
                 record.Title = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "title")?.Value;
                 record.Author = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "author")?.Value;
@@ -114,7 +113,6 @@ namespace AntennaBalanceValues
                         && ad.Value == "ModuleDataTransmitter"
                         )
                     );
-
                 record.Type = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaType")?.Value;
                 record.PacketInterval = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetInterval")?.Value;
                 record.PacketSize = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetSize")?.Value;
@@ -126,6 +124,45 @@ namespace AntennaBalanceValues
                 record.PacketCeiling = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "packetCeiling")?.Value;
                 record.Combinable = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinable")?.Value;
                 record.CombinableExponent = antenna?.AttributeDefinitions.FirstOrDefault(x => x.Name == "antennaCombinableExponent")?.Value;
+
+                var command = part.Nodes.FirstOrDefault(x => 
+                    x.Type == NodeType.Module
+                    && x.AttributeDefinitions.Any(ad => 
+                        ad.Name == "name"
+                        && ad.Value == "ModuleCommand"
+                        )
+                    );
+                record.MinimumCrew = command?.AttributeDefinitions.FirstOrDefault(x => x.Name == "minimumCrew")?.Value;
+                record.CrewCapacity = part.AttributeDefinitions.FirstOrDefault(x => x.Name == "CrewCapacity")?.Value;
+
+                var sas = part.Nodes.FirstOrDefault(x => 
+                    x.Type == NodeType.Module
+                    && x.AttributeDefinitions.Any(ad => 
+                        ad.Name == "name"
+                        && ad.Value == "ModuleSAS"
+                        )
+                    );
+                record.SasServiceLevel = sas?.AttributeDefinitions.FirstOrDefault(x => x.Name == "SASServiceLevel")?.Value;
+
+                var ec = part.Nodes.FirstOrDefault(x => 
+                    x.Type == NodeType.Resource
+                    && x.AttributeDefinitions.Any(ad => 
+                        ad.Name == "name"
+                        && ad.Value == "ElectricCharge"
+                        )
+                    );
+                record.ElectricCharge = ec?.AttributeDefinitions.FirstOrDefault(x => x.Name == "maxAmount")?.Value;
+
+                var reactionWheel = part.Nodes.FirstOrDefault(x => 
+                    x.Type == NodeType.Module
+                    && x.AttributeDefinitions.Any(ad => 
+                        ad.Name == "name"
+                        && ad.Value == "ModuleReactionWheel"
+                        )
+                    );
+                record.ReactionWheelPitchTorque = reactionWheel?.AttributeDefinitions.FirstOrDefault(x => x.Name == "PitchTorque")?.Value;
+                record.ReactionWheelYawTorque = reactionWheel?.AttributeDefinitions.FirstOrDefault(x => x.Name == "YawTorque")?.Value;
+                record.ReactionWheelRollTorque = reactionWheel?.AttributeDefinitions.FirstOrDefault(x => x.Name == "RollTorque")?.Value;
 
                 results.Add(record);
             }
