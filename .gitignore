@@ -332,5 +332,9 @@ ASALocalRun/
 # VSCode 
 .vscode/
 
+# Lock files
+.lock/
+.~lock.*
 
+# Files created by the project
 *\.csv
