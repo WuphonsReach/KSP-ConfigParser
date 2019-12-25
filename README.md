@@ -21,7 +21,7 @@ All of the pre-written analyzers are in the `samples/` folder.  They will parse 
 
 You will need to have installed the [.NET Core 2.1 (or later) SDK](https://dot.net/core).  This is available for macOS, Linux and Windows.  For the moment, that is the only prerequisite to be installed prior to forking/cloning the git repository.
 
-Take a look at [runsamples.sh](runsamples.sh) for how to run the sample projects on macOS/Linux.
+Take a look at [run-samples.sh](run-samples.sh) for how to run the sample projects on macOS/Linux.
 
 # Technology
 
