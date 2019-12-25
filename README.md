@@ -13,6 +13,10 @@ All of the pre-written analyzers are in the `samples/` folder.  They will parse 
 - AntennaBalanceValues: Pulls a list of all parts which can act as an antenna (direct, relay, internal).  I used this heavily to work on my KSP Stock Antenna Balance addon.
 - ProbeCoreValues: Pulls a list of all parts that have ModuleCommand.  Includes information like min/max crew, antenna values, mass, cost, etc..
 
+# Spreadsheet Links
+
+- [AntennaBalanceValues 1.8.1](https://docs.google.com/spreadsheets/d/1LVQxm1v-wOdYZpmVgXJPef13nOi2Itake04iL8eZbYE/edit?usp=sharing): KSP 1.8.1, mostly vanilla install, with part mods
+
 # Getting Started
 
 You will need to have installed the [.NET Core 2.1 (or later) SDK](https://dot.net/core).  This is available for macOS, Linux and Windows.  For the moment, that is the only prerequisite to be installed prior to forking/cloning the git repository.
